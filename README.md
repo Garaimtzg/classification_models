@@ -183,3 +183,74 @@ Los modelos entrenados se pueden guardar en Google Drive para no perderlos si Co
 
 - Repo: https://github.com/FareedKhan-dev/train-llm-from-scratch
 - Documentación del autor: https://fareedkhan-dev.github.io/train-llm-from-scratch/
+
+---
+
+## Jev: el original de TypeSafe
+
+- Empresa: [TypeSafe AI](https://typesafe.ai/) (San Francisco, fundada en 2026)
+- Documentación: [docs.typesafe.ai](https://docs.typesafe.ai/) · Cuenta y clave: [console.typesafe.ai](https://console.typesafe.ai/)
+- Notebook para probarlo: [`notebooks/jev_typesafe_colab.ipynb`](notebooks/jev_typesafe_colab.ipynb) (no necesita GPU, vale el Colab gratis)
+
+### Qué es
+
+Jev es el modelo con el que TypeSafe lanzó la idea de los **modelos "System One"**: modelos que no conversan, sino que **toman decisiones rápidas** para que las use un programa.
+CLM y el resto de **alternativas libres** que están saliendo copian su forma de trabajar.
+
+- Le mandas un texto (el "estado") y preguntas de tipo `Noul` (sí/no), `Choice` (elegir) o `Score` (puntuar).
+- Te devuelve porcentajes y, además, **la confianza**: lo seguro que está. La idea es que el programa actúe solo cuando la confianza es alta y mande a una persona lo dudoso.
+- TypeSafe dice que lo entrena con un método propio ("RLCD") pensado para que esos porcentajes sean fiables.
+
+### Jev frente a las alternativas libres
+
+| | Jev (TypeSafe) | CLM (libre) |
+|---|---|---|
+| Cómo se usa | Por internet (API), con cuenta y clave | Lo descargas y lo ejecutas tú |
+| Qué necesitas | Nada especial, vale cualquier ordenador | Una tarjeta gráfica de unos 24 GB |
+| Precio | 0,042 $ por millón de tokens de entrada (la salida es gratis) | Gratis, pero pagas tu GPU |
+| Tus datos | Salen de tu ordenador hacia TypeSafe (dicen que no entrenan con ellos) | No salen de tu máquina |
+| Adaptarlo a tu problema | No se puede reentrenar: solo se ajusta escribiendo bien las preguntas | Se pueden reentrenar sus piezas pequeñas |
+| Confianza | Sí, para cada respuesta | Solo los porcentajes |
+| Textos largos | Hasta 32.000 tokens de texto | 2.048 tokens por defecto |
+| Idiomas | Mejor en inglés; otros funcionan peor | Solo inglés |
+
+### ¿Se puede probar gratis?
+
+**Ahora mismo, no.** Según varias webs que lo siguen, al abrir el registro (20/09/2026) regalaban 5 $ de saldo, pero lo pararon por exceso de demanda
+y desde el 27/09/2026 las cuentas nuevas no reciben crédito gratis. Lo mejor es comprobarlo en [console.typesafe.ai](https://console.typesafe.ai/).
+
+Eso sí, **probarlo cuesta muy poco**: con 1 $ se procesan unos 24 millones de tokens. Se calcula que el notebook completo (unas 400 llamadas) gasta **menos de 1 céntimo**.
+La consola también tiene un [Playground](https://console.typesafe.ai/playground) para probarlo a mano desde el navegador.
+
+### Lo que dicen ellos y lo que reconocen que hace mal
+
+**Lo que dicen** (datos de su web):
+- **193 veces más rápido** y **444 veces más barato** que un LLM normal en este tipo de tareas (0,11 s frente a 8,6 s por decisión).
+- **Cero alucinaciones**, porque siempre responde con una de las opciones que le das y con su confianza.
+
+**Lo que reconocen que hace mal** (lo publican ellos mismos en la [lista de puntos débiles de Jev 1.13](https://docs.typesafe.ai/model-jaggedness/jev-1.13)):
+- **No sabe contar ni hacer cuentas.** Recomiendan hacer las cuentas en el código.
+- **No compara bien fechas.**
+- Se lía con **negaciones dobles** y preguntas enrevesadas.
+- Se lee las preguntas **al pie de la letra**: responde a lo que escribes, no a lo que querías decir.
+- Si el texto tiene mucha **información que no viene al caso**, acierta menos.
+- Se le puede **engañar** con textos escritos a propósito para despistarle.
+- Preguntar lo mismo de dos formas (por ejemplo, "¿pide un reembolso?" y "¿pide algo que no sea un reembolso?") puede dar resultados que no cuadran entre sí.
+
+### Qué hace el notebook
+
+1. Instala el SDK oficial (`typesafe-sdk`) y lee tu clave de los Secretos de Colab (con el nombre `TYPESAFE_API_KEY`).
+2. Repite las pruebas del notebook de CLM: el ticket de soporte en inglés y en español, elegir herramienta y elegir la solución de código correcta.
+3. Clasifica **las mismas 400 noticias** de AG News que el notebook de CLM y mide aciertos, velocidad y coste, para poder comparar los dos.
+4. Comprueba si su **confianza sirve**: cuántas noticias se podrían automatizar con cada nivel de confianza y cuánto acierta en ellas.
+5. Pone a prueba sus **puntos débiles** con casos sencillos de contar, hacer cuentas, comparar fechas y negaciones.
+6. Lleva la cuenta de lo gastado y guarda los resultados en `jev_resultados.json`.
+
+### Enlaces
+
+- Web de TypeSafe: https://typesafe.ai/
+- Documentación: https://docs.typesafe.ai/
+- Precios y modelos: https://docs.typesafe.ai/models
+- Puntos débiles de Jev 1.13: https://docs.typesafe.ai/model-jaggedness/jev-1.13
+- SDK de Python: https://github.com/typesafe-ai/typesafe-sdk-python
+- ¿Es gratis Jev?: https://www.layer3labs.io/guides/is-jev-free
