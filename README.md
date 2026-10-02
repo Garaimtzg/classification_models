@@ -69,7 +69,7 @@ Se parece más a un **clasificador** que a un chat. Encaja bien para:
 
 ### ¿Son buenos?
 
-**Lo que dicen sus autores** (nadie lo ha comprobado aún por su cuenta):
+**Lo que dicen sus autores**:
 
 - Sin entrenamiento extra, acierta más o menos lo mismo que Jev (otro modelo de decisión, que es con el que se comparan), pero es **hasta 9 veces más rápido**. Lo probaron en manejar un ordenador, jugar a videojuegos y elegir herramientas.
 - Con 1.000 opciones, es **13 veces más rápido** que Jev.
