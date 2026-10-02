@@ -105,8 +105,6 @@ vllm serve Qwen/Qwen3-8B --served-model-name qwen3-8b --runner pooling --max-mod
 clm-serve   # página de prueba en http://localhost:8700/
 ```
 
-En este equipo (WSL con 3,7 GB de RAM y sin tarjeta gráfica) no se puede ejecutar.
-
 ### Enlaces
 
 - Ficha del modelo: https://huggingface.co/Contrastive-LM/CLM-v0.1-8B
