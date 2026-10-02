@@ -113,3 +113,73 @@ clm-serve   # página de prueba en http://localhost:8700/
 - Anuncio de Azalia Mirhoseini: https://x.com/Azaliamirh/status/2102958024323428362
 - Anuncio de Jacky Kwok: https://x.com/jackyk02/status/2102905335925424285
 - Explicación sencilla: https://blog.dailydoseofds.com/p/contrastive-language-model-clearly
+
+---
+
+## Entrenar un LLM desde cero: train-llm-from-scratch
+
+- Repo: [FareedKhan-dev/train-llm-from-scratch](https://github.com/FareedKhan-dev/train-llm-from-scratch) (licencia MIT)
+- Notebook para probarlo: [`notebooks/train_llm_from_scratch_colab.ipynb`](notebooks/train_llm_from_scratch_colab.ipynb) (Google Colab Pro, mejor con A100)
+
+### Qué es
+
+Es un tutorial con código para **construir y entrenar un modelo tipo ChatGPT desde cero**, en miniatura.
+Todo está escrito a mano en PyTorch, sin usar librerías que lo den hecho (como `transformers`), así que se puede leer y entender cada pieza.
+
+Recorre las mismas fases que siguen los modelos de verdad:
+
+| Fase | Qué hace, en pocas palabras |
+|---|---|
+| **1. Preparar datos** | Descarga mucho texto en inglés (The Pile) y lo convierte en números, que es lo único que entiende el modelo |
+| **2. Preentrenamiento** | El modelo lee el texto y aprende a adivinar la siguiente palabra. Aquí aprende el idioma |
+| **3. SFT** | Le enseñamos a contestar preguntas con ejemplos de pregunta y respuesta. Aquí pasa de "continuar texto" a "contestar" |
+| **4. Modelo de recompensa** | Un modelo aparte aprende a puntuar qué respuesta es mejor |
+| **5. DPO / PPO** | El modelo aprende a preferir las respuestas buenas frente a las malas |
+| **6. GRPO** | Aprendizaje por refuerzo con problemas de matemáticas: si acierta el resultado, premio. Es la técnica de DeepSeek-R1 |
+| **7. Evaluar y chatear** | Mide cuántos problemas de matemáticas resuelve y deja hablar con él |
+
+### ¿Es factible?
+
+**Sí, pero en pequeño.** Depende mucho de qué tamaño de modelo quieras:
+
+| Tamaño | Dónde | Tiempo aproximado | Resultado esperado |
+|---|---|---|---|
+| 13 millones de parámetros | Colab (incluso la T4 gratuita) | Minutos | Palabras reales y frases con algo de gramática, pero sin sentido |
+| **77 millones** (el del notebook) | Colab Pro con A100 o L4 | Unas 1–3 horas en total | Frases bastante naturales, pero se inventa todo. Puede seguir el formato de chat |
+| 400 millones | 1–2 GPUs grandes (A100/H100) | Muchas horas o días | Algo mejor, todavía muy lejos de un modelo útil |
+| 1.000 millones o más | Varias GPUs grandes | Semanas | El repo dice que "cabe" en una A100, pero caber no es lo mismo que entrenarlo bien: harían falta miles de millones de palabras de texto |
+
+Lo he probado en pequeño (un modelo de 13 millones, solo con procesador): **todas las fases funcionan de principio a fin**, y las pruebas automáticas del repo pasan.
+Sin tarjeta gráfica va a unos 1.300 tokens por segundo, demasiado lento para algo más que comprobar que el código funciona.
+
+### ¿Merece la pena?
+
+**Para aprender, mucho.** Es de lo más completo que hay: en un solo sitio y con código sencillo se ve todo el proceso, desde el texto en bruto hasta el aprendizaje por refuerzo.
+
+**Para conseguir un modelo útil, no.** Hay que tener claras las expectativas:
+
+- El autor entrenó el modelo de 77 millones con 2 GPUs L40 en 2.000 pasos. La pérdida bajó de 11,1 a 3,8, que está bien para ese tamaño.
+- Su modelo de recompensa y su DPO aciertan un **57 %** al elegir la respuesta buena, cuando al azar sería un 50 %. Es decir, mejoran muy poco.
+- **No publica resultados de matemáticas** (GSM8K). Con un modelo tan pequeño lo esperable es acertar un **0–2 %**. Por comparación, los modelos de 7.000–8.000 millones aciertan entre el 50 % y el 90 %.
+- Como referencia, GPT-2 pequeño (2019) tenía 124 millones de parámetros y se entrenó con unos 10.000 millones de tokens. Aquí usamos 77 millones de parámetros y unos 200 millones de tokens.
+- El código prioriza que se entienda sobre la velocidad. Por ejemplo, la atención se calcula cabeza a cabeza en lugar de usar las versiones optimizadas de PyTorch, así que entrena más lento de lo que podría.
+
+**Si lo que quieres es un modelo propio que funcione bien**, es mucho mejor partir de un modelo ya preentrenado (por ejemplo Qwen o Llama) y ajustarlo con tus datos.
+
+### Qué hace el notebook
+
+1. Detecta la GPU y ajusta solo el tamaño del modelo y del lote.
+2. Instala el repo y pasa sus pruebas automáticas.
+3. Descarga y prepara unos 250 millones de tokens de The Pile.
+4. Preentrena el modelo de 77 millones (2.000 pasos) y dibuja la gráfica de la pérdida.
+5. Prueba el modelo base: solo sabe continuar texto.
+6. Hace el SFT con unos 75.000 ejemplos de pregunta y respuesta y prueba a chatear.
+7. Opcional: DPO y GRPO.
+8. Mide los aciertos en problemas de matemáticas en cada fase y deja chatear con el modelo final.
+
+Los modelos entrenados se pueden guardar en Google Drive para no perderlos si Colab se desconecta.
+
+### Enlaces
+
+- Repo: https://github.com/FareedKhan-dev/train-llm-from-scratch
+- Documentación del autor: https://fareedkhan-dev.github.io/train-llm-from-scratch/
