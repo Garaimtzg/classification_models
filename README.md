@@ -123,7 +123,7 @@ clm-serve   # página de prueba en http://localhost:8700/
 
 ### Qué es
 
-Es un tutorial con código para **construir y entrenar un modelo tipo ChatGPT desde cero**, en miniatura.
+Es un tutorial con código para **construir y entrenar un modelo tipo LLM desde cero**, en miniatura.
 Todo está escrito a mano en PyTorch, sin usar librerías que lo den hecho (como `transformers`), así que se puede leer y entender cada pieza.
 
 Recorre las mismas fases que siguen los modelos de verdad:
